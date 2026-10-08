@@ -4,9 +4,9 @@ A free Astro theme for consultants and small B2B service firms: a dark site with
 
 **Live demo:** https://orrery.formgong.com · **No build step?** Download `orrery-html.zip` from the [latest release](https://github.com/formgong/orrery-astro-theme/releases/latest): plain HTML files, replace `fk_your_access_key` and `https://example.com` with your own and upload them anywhere.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fformgong%2Forrery-astro-theme&project-name=orrery&repository-name=orrery&env=PUBLIC_FORMGONG_ACCESS_KEY&envDescription=Your%20Formgong%20access%20key%20%28fk_...%29.%20Create%20a%20free%20form%20to%20get%20one.&envLink=https%3A%2F%2Fformgong.com%2Fnew%3Fname%3Dorrery)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/formgong/orrery-astro-theme) [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fformgong%2Forrery-astro-theme&project-name=orrery&repository-name=orrery&env=PUBLIC_FORMGONG_ACCESS_KEY&envDescription=Your%20Formgong%20access%20key%20%28fk_...%29.%20Create%20a%20free%20form%20to%20get%20one.&envLink=https%3A%2F%2Fformgong.com%2Fnew%3Fname%3Dorrery)
 
-The button copies the theme to your GitHub, builds it and asks for one value: your Formgong access key (`fk_…`), free at https://formgong.com/new. The form works from the first deploy. Then set `url` in `src/config.ts` to your domain.
+Each button copies the theme to your GitHub, builds it and asks for one value: your Formgong access key (`fk_…`), free at https://formgong.com/new. The form works from the first deploy. Then set `url` in `src/config.ts` to your domain.
 
 The demo business is **Quillmoor Analytics**, a fictional five-person data and strategy consultancy in the fictional town of Port Alder. Everything on the site is sample content: phone numbers use the 555-01xx range reserved for fiction, every email and link uses `example.com`, and the team is described by role, not by name.
 
@@ -152,7 +152,7 @@ public/                 favicon.svg, og.png, apple-touch-icon.png
 
 ## Deploy
 
-`npm run build` produces a static site in `dist/` that any static host can serve. On Vercel, Netlify or Cloudflare, set `PUBLIC_FORMGONG_ACCESS_KEY` in the project's build environment variables: the key is read at build time. Set `url` in `src/config.ts` first so canonical links, the sitemap and the form redirect point at your domain.
+`npm run build` produces a static site in `dist/` that any static host can serve. On Vercel or Netlify, set `PUBLIC_FORMGONG_ACCESS_KEY` in the project's build environment variables: the key is read at build time. The Deploy to Cloudflare button stores it as a Worker secret instead, and `worker.js` puts it into the form as each page is served. Set `url` in `src/config.ts` first so canonical links, the sitemap and the form redirect point at your domain.
 
 ## License
 

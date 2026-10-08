@@ -38,5 +38,12 @@
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "cloudflare": {
+    "bindings": {
+      "PUBLIC_FORMGONG_ACCESS_KEY": {
+        "description": "Your Formgong access key (fk_…). Create a free form at https://formgong.com/new"
+      }
+    }
   }
 }
