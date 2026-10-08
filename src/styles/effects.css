@@ -1,0 +1,453 @@
+/* ==================================================================
+   Motion. Numbers in the comments match the effect list in README.md.
+
+   Rules that keep this file safe:
+   - The default (non-animated) style of every element IS its final state:
+     text filled, cards flat and lit, panel at full width. Browsers without
+     scroll-driven animations, and visitors who prefer reduced motion,
+     get exactly that.
+   - Every scroll-linked rule sits inside @supports (animation-timeline: …)
+     AND @media (prefers-reduced-motion: no-preference).
+   - Longhands on purpose (animation-name, animation-timeline, …): a
+     minifier can fold a shorthand plus animation-timeline into one
+     declaration that Chrome rejects.
+   - Wrappers around animated content use overflow: clip, never hidden:
+     overflow: hidden makes a scroll container, and a view() timeline
+     inside it would track that box instead of the page.
+================================================================== */
+
+/* Page-to-page: native cross-document View Transitions, no client router. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+  ::view-transition-old(root) {
+    animation: vt-out 0.2s var(--ease-in-out) both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-in 0.35s var(--ease-out) both;
+  }
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ------------------------------------------------------------------
+   2. Hero content fades in on load (time-based, not scroll).
+   Starts at 0.01, not 0, so the heading counts as painted for LCP.
+------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .load-in {
+    animation: load-in 1.1s var(--ease-out) both;
+    animation-delay: calc(120ms + var(--d, 0) * 140ms);
+  }
+  .load-fade {
+    animation: load-fade 2.4s ease-out 0.2s both;
+  }
+}
+@keyframes load-in {
+  from {
+    opacity: 0.01;
+    transform: translateY(28px);
+  }
+}
+@keyframes load-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------
+   3. Counters count up from 0 on load. A registered integer property is
+   animated and printed with counter(). The real number is in the HTML
+   (visually hidden) for screen readers and search engines; without
+   @property support the final value shows at once.
+------------------------------------------------------------------ */
+@property --num {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+.count {
+  --num: var(--to);
+  /* calc() rounds to an integer: WebKit animates the registered integer through fractions. */
+  counter-reset: num calc(var(--num));
+}
+.count::after {
+  content: counter(num) attr(data-suffix);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .count {
+    animation: count-up 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(500ms + var(--d, 0) * 160ms);
+  }
+}
+@keyframes count-up {
+  from {
+    --num: 0;
+  }
+}
+
+/* ------------------------------------------------------------------
+   6, 11. Orbits turn slowly, each ring at its own speed (time-based).
+------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .orbit-ring {
+    animation: spin var(--dur, 60s) linear infinite;
+    animation-direction: var(--dir, normal);
+  }
+  .orbits-turn {
+    animation: spin 140s linear infinite;
+  }
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Plain reveal for inner pages: slides up out of a mask as it scrolls in.
+------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal,
+    .stagger > * {
+      animation-name: reveal-up;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0px entry 140px;
+    }
+    .stagger > * {
+      animation-range: entry calc(var(--i, 0) * 36px) entry calc(140px + var(--i, 0) * 36px);
+    }
+  }
+}
+/* A mask reveal, not a fade: text is never shown at reduced contrast on its way in. */
+@keyframes reveal-up {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(28px);
+  }
+  to {
+    clip-path: inset(-2rem);
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   4. The hero network is clipped into a shrinking band and drifts down
+   (parallax) during the first screen of scrolling.
+------------------------------------------------------------------ */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-net {
+      animation-name: net-away;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 90vh;
+    }
+  }
+}
+@keyframes net-away {
+  to {
+    clip-path: inset(0 0 88% 0);
+    transform: translateY(22vh);
+    opacity: 0.4;
+  }
+}
+
+/* ------------------------------------------------------------------
+   5, 12. Text that fills letter by letter as you scroll: grey → white,
+   key words → accent. Each letter is a span with --i (built at compile
+   time by FillText.astro); the block shares one view timeline, and
+   letter i changes color in its own thin slice of that timeline.
+------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .fill {
+      view-timeline-name: --fill;
+    }
+    .fill .fc {
+      animation-name: fill-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --fill;
+      animation-range-start: cover calc(var(--fill-from, 22%) + var(--i) / var(--n) * var(--fill-span, 30%));
+      animation-range-end: cover calc(var(--fill-from, 22%) + 2% + var(--i) / var(--n) * var(--fill-span, 30%));
+    }
+  }
+}
+/* Letters stay together: each word is one unbreakable run. */
+.fw,
+.ww {
+  white-space: nowrap;
+}
+.warp,
+.wc {
+  display: inline-block;
+}
+@keyframes fill-in {
+  from {
+    color: var(--c-dim);
+  }
+}
+
+/* ------------------------------------------------------------------
+   7. The media panel scales up to full width as it scrolls in, and the
+   quote on it fades from grey to white.
+------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .media {
+      animation-name: media-grow;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 50%;
+    }
+    .media-quote {
+      animation-name: fill-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: cover 30% cover 55%;
+    }
+  }
+}
+@keyframes media-grow {
+  from {
+    transform: scale(0.82);
+  }
+}
+
+/* ------------------------------------------------------------------
+   9. Service cards enter tilted back in 3D and dark, lower and to the
+   right, column by column (a stair-step), then settle flat, light up
+   and lock into the grid. --col is the card's column at each width.
+------------------------------------------------------------------ */
+.svc-card {
+  --col: 0;
+}
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .svc-card:nth-child(2n) {
+    --col: 1;
+  }
+}
+@media (min-width: 1024px) {
+  .svc-card:nth-child(3n + 2) {
+    --col: 1;
+  }
+  .svc-card:nth-child(3n) {
+    --col: 2;
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .svc-card {
+      transform-origin: 50% 0%;
+      animation-name: card-in;
+      animation-timing-function: cubic-bezier(0.3, 0.6, 0.35, 1);
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range-start: entry calc(var(--col) * 18%);
+      animation-range-end: cover calc(36% + var(--col) * 8%);
+    }
+  }
+}
+@keyframes card-in {
+  from {
+    transform: perspective(1100px) translate3d(calc(2.5rem + var(--col) * 2.5rem), calc(7rem + var(--col) * 6rem), 0)
+      rotateX(-64deg);
+    filter: brightness(0.34);
+  }
+  to {
+    transform: perspective(1100px) translate3d(0, 0, 0) rotateX(0deg);
+    filter: brightness(1);
+  }
+}
+
+/* ------------------------------------------------------------------
+   10. Split section: the visual and the pattern inside it move at
+   different speeds from the text next to them.
+------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .par {
+      animation-name: par-y;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    /* The pattern inside the frame drifts the other way. */
+    .par-inner {
+      --par-from: -8%;
+      --par-to: 8%;
+    }
+  }
+}
+@keyframes par-y {
+  from {
+    transform: translateY(var(--par-from, 14%));
+  }
+  to {
+    transform: translateY(var(--par-to, -14%));
+  }
+}
+
+/* ------------------------------------------------------------------
+   11. Process: the accent panel grows out of the left edge of the screen
+   as it scrolls in. Each step's title enters warped (tilted back, skewed,
+   letters on a wavy baseline) and straightens; its paragraph is revealed
+   after it.
+------------------------------------------------------------------ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .process-panel {
+      animation-name: panel-grow;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+    .step {
+      view-timeline-name: --step;
+    }
+    .step-dot,
+    .warp,
+    .warp .wc,
+    .step-body {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --step;
+    }
+    .step-dot {
+      animation-name: dot-in;
+      animation-range: entry 10% entry 70%;
+    }
+    .warp {
+      transform-origin: 0% 100%;
+      animation-name: warp-in;
+      animation-timing-function: cubic-bezier(0.3, 0.7, 0.4, 1);
+      animation-range: entry 30% cover 42%;
+    }
+    .warp .wc {
+      animation-name: wave-in;
+      animation-range: entry 30% cover 44%;
+    }
+    .step-body {
+      animation-name: body-in;
+      animation-range: cover 38% cover 52%;
+    }
+  }
+}
+@keyframes panel-grow {
+  from {
+    clip-path: inset(0 70% 0 0 round 0 var(--radius) var(--radius) 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0 var(--radius) var(--radius) 0);
+  }
+}
+@keyframes dot-in {
+  from {
+    transform: scale(0.2);
+  }
+}
+@keyframes warp-in {
+  from {
+    transform: perspective(26rem) rotateX(62deg) rotate(-8deg) skewX(-18deg) scale(1.1, 0.6);
+  }
+}
+@keyframes wave-in {
+  from {
+    transform: translateY(calc(sin(var(--i) * 0.7) * 0.5em)) rotate(calc(cos(var(--i) * 0.7) * 14deg));
+  }
+}
+@keyframes body-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(1.75rem);
+  }
+  to {
+    clip-path: inset(-0.5rem -0.5rem -0.5rem -0.5rem);
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Form states (time-based).
+------------------------------------------------------------------ */
+@keyframes shake {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  .is-sending .spinner {
+    animation: spin 0.8s linear infinite;
+  }
+  .form-success:not([hidden]) {
+    animation: rise-in 0.5s var(--ease-out) both;
+  }
+  .form-success:not([hidden]) .check-ring {
+    animation: draw 0.7s var(--ease-out) 0.1s both;
+  }
+  .form-success:not([hidden]) .check-mark {
+    animation: draw 0.45s var(--ease-out) 0.65s both;
+  }
+  .form-error:not([hidden]) {
+    animation: shake 0.42s var(--ease-in-out);
+  }
+}
+
+/* Safety net: anything that still moves becomes an instant change. */
+@media (prefers-reduced-motion: reduce) {
+  .btn:active,
+  .btn:hover .icon-shift {
+    transform: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

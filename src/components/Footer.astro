@@ -1,0 +1,106 @@
+---
+/** 13. Footer over an animated 3D field of dots (canvas, src/scripts/scenes.ts). */
+import { SITE } from "../config";
+import Icon from "./Icon.astro";
+
+const { address } = SITE;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer relative isolate overflow-clip">
+  <canvas class="footer-wave" data-scene="wave" aria-hidden="true"></canvas>
+  <div class="container-x">
+    <div class="grid gap-12 border-t border-line pt-16 pb-14 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8 lg:pt-24">
+      <div class="lg:col-span-6">
+        <p class="text-3xl font-light tracking-tight text-muted">Get in touch<span class="text-accent">.</span></p>
+        <a href={SITE.cta.href} class="btn btn-primary btn-lg mt-8">{SITE.cta.label}</a>
+        <address class="mt-8 text-[0.98rem] leading-relaxed not-italic">
+          {address.street}<br />
+          {address.city}, {address.region} {address.postalCode}
+        </address>
+      </div>
+
+      <div class="lg:col-span-3">
+        <h2 class="footer-heading">Enquiries</h2>
+        <ul class="mt-5 space-y-3">
+          <li><a href={`mailto:${SITE.email}`} class="footer-link">{SITE.email}</a></li>
+          <li><a href={`tel:${SITE.phone.tel}`} class="footer-link">{SITE.phone.display}</a></li>
+        </ul>
+        <ul class="mt-6 flex gap-2">
+          {
+            SITE.social.map((s) => (
+              <li>
+                <a href={s.href} class="social-link" rel="noopener" target="_blank">
+                  <Icon name={s.icon} label={s.label} size={20} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <nav aria-labelledby="footer-links" class="lg:col-span-3">
+        <h2 id="footer-links" class="footer-heading">Links</h2>
+        <ul class="mt-5 space-y-3">
+          <li><a href="/" class="footer-link">Home</a></li>
+          {
+            SITE.nav.map((item) => (
+              <li>
+                <a href={item.href} class="footer-link">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex flex-col gap-2 pb-10 text-sm text-muted sm:flex-row sm:items-end sm:justify-between">
+      <p>&copy; {year} {SITE.name}. A sample business: names and figures are made up.</p>
+      <p>
+        Orrery theme for Astro. Forms by <a href="https://formgong.com" class="footer-link underline underline-offset-4">Formgong</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer-wave {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: -1;
+    width: 100%;
+    height: min(80%, 36rem);
+    color: #8582e0;
+  }
+  .footer-heading {
+    font-size: 1rem;
+    font-weight: 350;
+    color: var(--c-muted);
+  }
+  .footer-link {
+    color: var(--c-ink);
+    border-radius: 0.375rem;
+    transition: color 0.2s;
+  }
+  .footer-link:hover {
+    color: var(--accent);
+  }
+  .social-link {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--c-line);
+    color: var(--c-muted);
+    transition:
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .social-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+</style>

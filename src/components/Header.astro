@@ -1,0 +1,177 @@
+---
+/**
+ * 1. Fixed header: logo, three links in the middle, the accent button on the right and a 1px
+ * divider that runs from the content edge to the right edge of the screen.
+ */
+import { SITE } from "../config";
+import Icon from "./Icon.astro";
+import Logo from "./Logo.astro";
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container-x relative grid h-(--header-h) grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
+    <a href="/" class="justify-self-start rounded-lg">
+      <Logo />
+    </a>
+
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-2">
+        {
+          SITE.nav.map((item) => (
+            <li>
+              <a href={item.href} class="nav-link" aria-current={isCurrent(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2 justify-self-end">
+      <a href={SITE.cta.href} class="btn btn-primary hidden min-h-12 px-6 sm:inline-flex lg:min-h-14 lg:px-7 lg:text-lg">{SITE.cta.label}</a>
+      <button type="button" popovertarget="mobile-nav" class="menu-btn inline-grid lg:hidden" aria-label="Open menu">
+        <Icon name="menu" />
+      </button>
+    </div>
+    <span class="header-rule" aria-hidden="true"></span>
+  </div>
+
+  <div id="mobile-nav" popover class="mobile-nav">
+    <div class="container-x flex h-(--header-h) items-center justify-between">
+      <a href="/" class="rounded-lg"><Logo /></a>
+      <button type="button" popovertarget="mobile-nav" popovertargetaction="hide" class="menu-btn inline-grid" aria-label="Close menu">
+        <Icon name="x" />
+      </button>
+    </div>
+    <nav aria-label="Mobile" class="container-x pt-6">
+      <ul class="border-t border-line">
+        <li><a href="/" class="mobile-link" aria-current={path === "/" ? "page" : undefined}>Home</a></li>
+        {
+          SITE.nav.map((item) => (
+            <li>
+              <a href={item.href} class="mobile-link" aria-current={isCurrent(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href={SITE.cta.href} class="btn btn-primary btn-lg mt-10 w-full">{SITE.cta.label}</a>
+      <p class="mt-6 text-sm text-muted">
+        <a href={`mailto:${SITE.email}`} class="underline underline-offset-4">{SITE.email}</a> · {SITE.phone.display}
+      </p>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Close the menu when a link inside it is followed (matters for same-page anchors).
+  const menu = document.getElementById("mobile-nav");
+  menu?.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a")) menu.hidePopover();
+  });
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    overflow-x: clip;
+    background: var(--c-bg);
+    view-transition-name: site-header;
+  }
+  /* From the left edge of the content to the right edge of the screen (clipped there). */
+  .header-rule {
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: -100vw;
+    height: 1px;
+    background: rgb(255 255 255 / 0.28);
+  }
+  @media (min-width: 640px) {
+    .header-rule {
+      left: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .header-rule {
+      left: 2rem;
+    }
+  }
+  .nav-link {
+    display: inline-flex;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.625rem;
+    font-size: 1.0625rem;
+    text-transform: lowercase;
+    color: var(--c-ink);
+    transition: color 0.2s;
+  }
+  .nav-link:hover,
+  .nav-link[aria-current="page"] {
+    color: var(--accent);
+  }
+  /* display comes from utility classes so lg:hidden can win */
+  .menu-btn {
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.875rem;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    color: var(--c-ink);
+  }
+  .menu-btn :global(.icon) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0 0 2rem;
+    border: 0;
+    overflow-y: auto;
+    background: var(--c-bg);
+    color: var(--c-ink);
+  }
+  .mobile-link {
+    display: block;
+    padding: 1.125rem 0.25rem;
+    border-bottom: 1px solid var(--c-line);
+    font-size: 2rem;
+    font-weight: 250;
+    letter-spacing: -0.02em;
+  }
+  .mobile-link[aria-current="page"] {
+    color: var(--accent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mobile-nav {
+      transition:
+        opacity 0.25s var(--ease-out),
+        transform 0.3s var(--ease-out),
+        overlay 0.3s allow-discrete,
+        display 0.3s allow-discrete;
+    }
+    .mobile-nav:not(:popover-open) {
+      opacity: 0;
+      transform: translateY(-12px);
+    }
+    @starting-style {
+      .mobile-nav:popover-open {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+    }
+  }
+</style>

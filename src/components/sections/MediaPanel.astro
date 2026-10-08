@@ -1,0 +1,24 @@
+---
+/**
+ * 7. Large rounded panel that scales up to full width as it scrolls in, with a quote that fades
+ * from grey to white. The moving picture is a canvas of drifting lines (no video, no photo).
+ */
+---
+
+<section class="pb-24 sm:pb-28 lg:pb-36" aria-label="How we work">
+  <div class="container-x">
+    <figure class="media relative grid min-h-[26rem] place-items-center overflow-clip rounded-3xl bg-surface sm:min-h-[32rem] lg:aspect-[16/8]">
+      <canvas class="absolute inset-0 size-full" data-scene="flow" aria-hidden="true"></canvas>
+      <div class="absolute inset-0 bg-bg/40" aria-hidden="true"></div>
+      <blockquote class="media-quote relative max-w-4xl px-6 py-16 text-center text-[clamp(1.75rem,1.1rem+2.6vw,3.25rem)] leading-tight font-light tracking-tight">
+        <p>“Every number we send comes with the query that produced it<span class="hl">.</span>”</p>
+      </blockquote>
+    </figure>
+  </div>
+</section>
+
+<style>
+  canvas {
+    color: #c9c9d8;
+  }
+</style>

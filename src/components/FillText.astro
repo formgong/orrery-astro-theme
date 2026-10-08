@@ -1,0 +1,37 @@
+---
+/**
+ * 5, 12. Text that fills letter by letter as it scrolls through the screen: grey → white, and
+ * the words in *asterisks* → accent. The letters are split here, at build time, so the browser
+ * runs no script for it (the animation is in src/styles/effects.css, ".fill").
+ *
+ * Screen readers and search engines get the sentence once, as plain text; the letter spans are
+ * aria-hidden. Without scroll-driven animations, or with reduced motion, the text is simply
+ * shown filled.
+ */
+import { splitLetters } from "../lib/split";
+
+interface Props {
+  text: string;
+  as?: "p" | "h2" | "h3" | "blockquote";
+  class?: string;
+  /** Where in the block's view timeline the fill starts and how much of it it takes (CSS %). */
+  from?: string;
+  span?: string;
+  id?: string;
+}
+const { text, as: Tag = "p", class: className, from, span, id } = Astro.props;
+const { words, count, plain } = splitLetters(text);
+const style = [`--n:${count}`, from && `--fill-from:${from}`, span && `--fill-span:${span}`].filter(Boolean).join(";");
+---
+
+<Tag class:list={["fill", className]} style={style} id={id}>
+  <span class="sr-only">{plain}</span>
+  <span aria-hidden="true">{
+    words.map((word, w) => (
+      <Fragment>
+        <span class="fw">{word.map((l) => <span class:list={["fc", l.hl && "hl"]} style={`--i:${l.i}`}>{l.ch}</span>)}</span>
+        {w < words.length - 1 ? " " : ""}
+      </Fragment>
+    ))
+  }</span>
+</Tag>

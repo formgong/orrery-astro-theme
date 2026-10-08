@@ -1,0 +1,28 @@
+---
+/**
+ * 11. A step title that enters warped (tilted back, skewed, letters on a wavy baseline) and
+ * straightens as it scrolls in. Letters are split at build time; the animation is ".warp" in
+ * src/styles/effects.css. Screen readers get the title once, as plain text.
+ */
+import { splitLetters } from "../lib/split";
+
+interface Props {
+  text: string;
+  as?: "h2" | "h3";
+  class?: string;
+}
+const { text, as: Tag = "h3", class: className } = Astro.props;
+const { words, plain } = splitLetters(text);
+---
+
+<Tag class:list={["warp-title", className]}>
+  <span class="sr-only">{plain}</span>
+  <span class="warp" aria-hidden="true">{
+    words.map((word, w) => (
+      <Fragment>
+        <span class="ww">{word.map((l) => <span class="wc" style={`--i:${l.i}`}>{l.ch}</span>)}</span>
+        {w < words.length - 1 ? " " : ""}
+      </Fragment>
+    ))
+  }</span>
+</Tag>

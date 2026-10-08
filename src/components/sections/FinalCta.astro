@@ -1,0 +1,23 @@
+---
+/** 12. Final call to action: a heading that fills letter by letter, the accent button and the form. */
+import ContactForm from "../ContactForm.astro";
+import FillText from "../FillText.astro";
+---
+
+<section class="section" aria-labelledby="cta-title">
+  <div class="container-x text-center">
+    <p class="text-lg sm:text-xl">Have a decision coming up?</p>
+    <FillText
+      as="h2"
+      id="cta-title"
+      class="h-statement mx-auto mt-4 max-w-4xl"
+      from="18%"
+      span="28%"
+      text="Tell us the *decision* you are stuck on. We will say on one call whether *data can help*."
+    />
+    <a href="#start" class="btn btn-primary btn-lg mt-12">Start a conversation</a>
+    <div id="start" class="mx-auto mt-20 max-w-2xl scroll-mt-28 text-left lg:mt-28">
+      <ContactForm id="home" />
+    </div>
+  </div>
+</section>

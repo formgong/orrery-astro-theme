@@ -1,0 +1,24 @@
+---
+/** 10. Split section: a large paragraph and an accent button, next to a visual moving at its own speed. */
+import Icon from "../Icon.astro";
+import Ridgelines from "../Ridgelines.astro";
+---
+
+<section class="section overflow-x-clip" aria-label="When we say no">
+  <div class="container-x grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+    <div>
+      <p class="text-[clamp(1.5rem,1.1rem+1.4vw,2.375rem)] leading-snug font-light">
+        Two of our last five projects ended with a spreadsheet instead of a model. If a pivot table answers your question, we say so
+        in the first week and bill for the first week.
+      </p>
+      <a href="/contact/#enquiry" class="btn btn-primary btn-lg mt-10">Book a 30-minute call <Icon name="arrow-right" class="icon-shift" /></a>
+    </div>
+    <div class="par">
+      <div class="aspect-[4/5] overflow-clip rounded-3xl bg-surface sm:aspect-[5/4] lg:aspect-[4/5]">
+        <div class="par par-inner -mt-[9%] h-[118%]">
+          <Ridgelines />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

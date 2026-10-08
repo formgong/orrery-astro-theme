@@ -1,0 +1,89 @@
+---
+/**
+ * 11. Process: an accent panel that grows out of the left edge of the screen as it scrolls in,
+ * next to turning orbits that stay in place (sticky). Each step = dot + title + paragraph; the
+ * title enters warped and straightens, then the paragraph is revealed. Edit the steps below.
+ */
+import Orbits from "../Orbits.astro";
+import WarpTitle from "../WarpTitle.astro";
+
+const steps = [
+  {
+    title: "A two-week diagnostic",
+    body: "We read your data, sit with the people who use the numbers and write a ten-page memo: what the data can answer, what it can't, and three options with prices. You can stop there and keep the memo.",
+  },
+  {
+    title: "One question, one owner",
+    body: "Each project answers a single business question, agreed in writing, with one person on your side who decides. A change of scope goes through that person and gets a new price before work continues.",
+  },
+  {
+    title: "Built in your tools",
+    body: "Models run in your warehouse or as a plain Python script on your server. There is no platform to license and no login that stops working when our contract ends.",
+  },
+  {
+    title: "Handover, then a check-in",
+    body: "In the last week your analyst reruns everything while we watch. Ninety days later we come back for a day, at no charge, to check that the numbers still hold.",
+  },
+];
+---
+
+<section class="process overflow-x-clip py-16 lg:py-24" aria-labelledby="process-title">
+  <div class="container-x grid lg:grid-cols-[minmax(0,1.75fr)_minmax(0,1fr)]">
+    <div class="process-panel">
+      <h2 id="process-title" class="text-3xl font-light tracking-tight sm:text-4xl">How a project runs</h2>
+      <ol class="mt-16 grid gap-20 lg:mt-24 lg:gap-28">
+        {
+          steps.map((step) => (
+            <li class="step max-w-xl">
+              <span class="step-dot" aria-hidden="true" />
+              <WarpTitle text={step.title} class="mt-8 text-[clamp(1.75rem,1.4rem+1.2vw,2.5rem)] leading-tight font-medium tracking-tight" />
+              <p class="step-body mt-6 text-lg leading-relaxed sm:text-xl sm:leading-relaxed">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+    <div class="hidden lg:block">
+      <div class="sticky top-[calc(50vh-10rem)] pl-12">
+        <Orbits variant="rings" class="mx-auto max-w-[22rem]" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* --pad matches .container-x; --bleed is the distance from the screen's left edge to the content. */
+  .process {
+    --pad: 1rem;
+  }
+  @media (min-width: 640px) {
+    .process {
+      --pad: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .process {
+      --pad: 2rem;
+    }
+  }
+  .process-panel {
+    --bleed: calc(max(0px, (100vw - 80rem) / 2) + var(--pad));
+    margin-left: calc(-1 * var(--bleed));
+    padding: 5rem 1.5rem 6rem calc(var(--bleed) + 0.5rem);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  @media (min-width: 1024px) {
+    .process-panel {
+      padding: 7rem 4rem 9rem calc(var(--bleed) + 7rem);
+    }
+  }
+  .step-dot {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    background: currentColor;
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+/** 8. Two-tone heading and 9. the service cards that enter in 3D. */
+import { getCollection } from "astro:content";
+import SectionHeading from "../SectionHeading.astro";
+import ServiceCard from "../ServiceCard.astro";
+
+const services = (await getCollection("services")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section overflow-x-clip" aria-labelledby="services-title">
+  <div class="container-x">
+    <SectionHeading
+      id="services-title"
+      title="Our *services*"
+      lead="Six kinds of work. Each one starts with a written scope and a fixed price."
+    />
+    <ul class="mt-16 grid gap-6 sm:grid-cols-2 lg:mt-24 lg:grid-cols-3">
+      {services.map((service) => <ServiceCard service={service} />)}
+    </ul>
+  </div>
+</section>

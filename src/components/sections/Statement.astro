@@ -1,0 +1,22 @@
+---
+/** 5. Statement that fills letter by letter on scroll, and 6. the turning orbits beside a paragraph. */
+import FillText from "../FillText.astro";
+import Orbits from "../Orbits.astro";
+---
+
+<section class="section" aria-label="What we do">
+  <div class="container-x">
+    <FillText
+      class="h-statement max-w-4xl"
+      text="We turn the records you already keep into *forecasts*, *prices* and *plans* your team can check line by line."
+    />
+    <div class="mt-20 grid items-center gap-12 lg:mt-28 lg:grid-cols-2 lg:gap-16">
+      <Orbits class="mx-auto max-w-[20rem] lg:max-w-[24rem]" />
+      <p class="text-[clamp(1.375rem,1.1rem+1vw,2rem)] leading-snug font-light">
+        Most clients already have the data: sales exports, a CRM, a stock system and a few spreadsheets kept by hand. We clean it
+        once, model it in plain SQL and Python, and hand over the code and the notes to a named person on your side who can rerun
+        it.
+      </p>
+    </div>
+  </div>
+</section>
