@@ -64,12 +64,12 @@ export const SITE = {
     { label: "GitHub", href: "https://github.com", icon: "github" },
   ],
 
-  /** The counters in the hero. These are SAMPLE figures: replace them with your real ones. */
+  /** The counters in the hero. These are SAMPLE figures: replace them with your real ones. A "|" in a label is where its line breaks. */
   stats: [
-    { value: 14, label: "years in practice" },
-    { value: 112, label: "projects delivered" },
-    { value: 38, label: "models in use" },
-    { value: 5, label: "people on staff" },
+    { value: 14, label: "years of|experience" },
+    { value: 86, label: "projects|delivered" },
+    { value: 112, label: "models now|in use" },
+    { value: 5, label: "consultants|on staff" },
   ] as Stat[],
   /** Small caption under the counters. Set to "" once the figures are real. */
   statsNote: "Sample figures for the Orrery demo.",
@@ -79,7 +79,7 @@ export const SITE = {
    * `accentText` is the text color on accent fills: keep a contrast ratio of at least 4.5:1
    * (the default near-black on lime is about 17:1).
    */
-  theme: { accent: "#d8ff3e", accentText: "#06051a" },
+  theme: { accent: "#dcfd35", accentText: "#040319" },
 
   /**
    * Contact form. PUBLIC_FORMGONG_ACCESS_KEY in .env wins over `accessKey`.
@@ -92,9 +92,9 @@ export const SITE = {
   },
 
   nav: [
-    { label: "Services", href: "/services/" },
-    { label: "About", href: "/about/" },
-    { label: "Contact", href: "/contact/" },
+    { label: "services", href: "/services/" },
+    { label: "about", href: "/about/" },
+    { label: "contact", href: "/contact/" },
   ],
   /** The lime button in the header and footer. */
   cta: { label: "Book a call", href: "/contact/#enquiry" },

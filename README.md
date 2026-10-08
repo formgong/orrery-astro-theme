@@ -5,9 +5,9 @@ A free Astro theme for consultants and small B2B service firms: a dark site with
 The demo business is **Quillmoor Analytics**, a fictional five-person data and strategy consultancy in the fictional town of Port Alder. Everything on the site is sample content: phone numbers use the 555-01xx range reserved for fiction, every email and link uses `example.com`, and the team is described by role, not by name.
 
 - **One file to rebrand.** Name, contact details, hours, the hero counters, the accent color and the form key live in `src/config.ts`. Services are Markdown files.
-- **Thirteen scroll and load effects, no animation library.** Text that fills letter by letter, cards that swing up in 3D, a panel that grows out of the screen edge, titles that straighten as they arrive. All of it is CSS scroll-driven animation, plus one 2.6 KB canvas script for the particle network, the drifting lines and the dot wave.
+- **Thirteen scroll and load effects, no animation library.** Service cards that start as a staircase and pull up into a grid as you scroll, flipping in from flat; statements that fill line by line; a panel that slides in from the screen edge; titles that tilt into place. Timings, easings and scroll ranges were measured on the reference design with Playwright. All of it is CSS plus three tiny scripts, and all of it stops for visitors who prefer reduced motion.
 - **A contact form that never fakes success.** It shows "Message received" only when the form backend answers `success: true`. Errors and lost connections show an error. Without JavaScript it still works as a plain HTML form.
-- **Fast and accessible.** Static pages, one self-hosted variable font, three small scripts (the canvas scenes, the form, closing the mobile menu). Labels on every field, visible focus, AA contrast for every text color, including the grey of text that has not filled yet, and `prefers-reduced-motion` respected everywhere.
+- **Fast and accessible.** Static pages, one self-hosted font (Questrial), a few small scripts (the canvas scenes, the entrance trigger, the orbit lean, the form, closing the mobile menu). Labels on every field, visible focus, AA contrast for every text colour in its final state. Lighthouse mobile: 99–100 / 100 / 100 / 100.
 
 Built with Astro 7, Tailwind CSS 4 and TypeScript.
 
@@ -51,7 +51,7 @@ The JSON-LD block has no star rating on purpose: search engines ignore ratings a
 
 ## Set up the form
 
-The contact form posts to [Formgong](https://formgong.com), a hosted form backend, so you don't need a server. It appears on the contact page and at the bottom of the home page.
+The contact form posts to [Formgong](https://formgong.com), a hosted form backend, so you don't need a server. It appears on the contact page; the buttons on the home page lead to it.
 
 1. Create a free form at [formgong.com/new](https://formgong.com/new?name=Website%20contact%20form) (or from the dashboard if you already have an account).
 2. Copy the form's access key. It starts with `fk_` and is public by design: it only lets visitors send submissions to that one form.
@@ -77,7 +77,7 @@ Submissions arrive by email and, if you connect it, in Telegram. The free plan c
 ## Edit the content
 
 - **Services:** one Markdown file per service in `src/content/services/`. Frontmatter: `title`, `tags` (the short line on the card), `summary`, `order`, `priceFrom`, `duration`, `deliverables` (list) and `art`, the card's line animation: `grid`, `bars`, `forecast`, `curve`, `bells` or `clusters` (see `src/components/ServiceArt.astro`). The body is shown on the services page.
-- **Key words in the accent:** wrap them in asterisks, for example `title="Our *services*"`. This works in section headings, page headers and the text that fills on scroll.
+- **Key words in the accent:** wrap them in asterisks, for example `lines={["Our *services*"]}`. This works in section headings, page headers and the lines that fill on scroll (`FillLines.astro`: one string per line).
 - **Home page copy:** one file per section in `src/components/sections/`. The process steps are at the top of `Process.astro`.
 - **About page:** roles and terms at the top of `src/pages/about.astro`.
 
@@ -87,38 +87,38 @@ Numbers match the comments in the code.
 
 | #  | Effect | Where |
 | -- | ------ | ----- |
-| 1  | Fixed header: logo, three links, accent button, a 1px divider from the content edge to the screen edge | `Header.astro` |
-| 2  | Hero heading and counters fade up on load; a 3D particle network turns slowly on the right | `sections/Hero.astro`, `scripts/scenes.ts` (`plexus`) |
-| 3  | Counters count up from 0 in the accent color | `.count` in `effects.css` |
-| 4  | The network is clipped into a shrinking band and drifts down as you scroll away | `.hero-net` |
-| 5  | A statement fills letter by letter, grey to white, key words to the accent | `FillText.astro`, `.fill` |
-| 6  | Line-art orbits turn slowly, each ring at its own speed | `Orbits.astro`, `.orbit-ring` |
-| 7  | A large rounded panel of drifting lines scales up to full width; its quote fades from grey to white | `sections/MediaPanel.astro`, `.media`, `scenes.ts` (`flow`) |
-| 8  | Two-tone section heading with a short accent rule | `SectionHeading.astro` |
-| 9  | Service cards swing up from a 3D tilt, dark and offset down and to the right column by column, then light up and lock into the grid; each card loops its own line drawing | `ServiceCard.astro`, `ServiceArt.astro`, `.svc-card` |
-| 10 | Split section: the visual and the ridgeline chart inside it move at different speeds | `sections/Split.astro`, `Ridgelines.astro`, `.par` |
-| 11 | An accent panel grows out of the left edge of the screen next to sticky turning orbits; each step title enters warped and straightens, then its paragraph is revealed | `sections/Process.astro`, `WarpTitle.astro`, `.process-panel`, `.warp` |
-| 12 | The closing heading fills letter by letter, like 5 | `sections/FinalCta.astro` |
+| 1  | Fixed 90px header: logo, three links, accent button, a 1px divider from the content edge to the screen edge | `Header.astro` |
+| 2  | On load the first heading line tilts in, the second is wiped in from the left, the lead fades in; a 3D particle network fills the whole hero behind the text, pushed aside by the pointer | `sections/Hero.astro`, `scripts/scenes.ts` (`plexus`) |
+| 3  | Counters count up from 0 in steps, in the accent color | `.count` in `effects.css` |
+| 4  | The hero stays put (sticky) while the next block slides up over it | `.hero-wrap` in `pages/index.astro` |
+| 5  | A statement fills line by line: the key words turn from grey to the accent behind a front that sweeps left to right | `FillLines.astro`, `.fl-top` |
+| 6  | Line-art orbits turn slowly and lean towards the pointer | `Orbits.astro`, `.orbit-ring`, `scripts/follow.ts` |
+| 7  | A large rounded panel of drifting lines grows from 90% as it scrolls in; its quote flips in | `sections/MediaPanel.astro`, `.media`, `scenes.ts` (`flow`) |
+| 8  | Two-tone section heading that fills like 5, a lead and a short accent rule | `sections/Services.astro` |
+| 9  | Service cards start as a staircase, each 300px below the last, and pull up into a 3-column grid (2 columns on tablets) as you scroll; each flips in from flat when it reaches the screen; the finished grid scrolls away as one block | `sections/Services.astro`, `ServiceCard.astro`, `ServiceArt.astro`, `[data-enter="flip"]` |
+| 10 | Split section: the picture grows from 90% as it scrolls in | `sections/Split.astro`, `Ridgelines.astro`, `.split-pic` |
+| 11 | An accent panel slides in from the left edge of the screen next to sticky turning orbits; each step's dot opens, its title tilts in and its paragraph is wiped up | `sections/Process.astro`, `[data-enter]` |
+| 12 | The closing heading fills like 5 | `sections/FinalCta.astro` |
 | 13 | Footer over a rolling 3D field of dots | `Footer.astro`, `scenes.ts` (`wave`) |
 
 How it is built:
 
-- **Scroll-linked effects are CSS.** They use `animation-timeline: view()` and `scroll()` (scroll-driven animations), so the browser runs them off the scroll position, with no scroll listeners. They are all in `src/styles/effects.css`.
-- **Letters are split at build time.** `FillText.astro` and `WarpTitle.astro` wrap each letter in a span with its index while Astro renders the page; nothing is split in the browser. Screen readers and search engines get each sentence once, as plain text; the letter spans are `aria-hidden`.
-- **One canvas script** (`src/scripts/scenes.ts`, 2.6 KB minified, no dependencies) draws the particle network, the drifting lines and the dot wave. It caps the device pixel ratio at 2, draws only while a canvas is on screen and the tab is visible, and draws a single still frame when the visitor prefers reduced motion.
-- **The counters are CSS too:** a registered integer property animated from 0 and printed with `counter()`. The real numbers are in the HTML for screen readers and search engines.
+- **Scroll-linked effects are CSS** (`animation-timeline: view(0px)`, one view timeline per element), so the browser runs them off the scroll position with no scroll listeners. They are all in `src/styles/effects.css`. `view(0px)` rather than `view()`: the default inset is the page's `scroll-padding`, which would shorten every range by the header height.
+- **Entrances are CSS animations started by a 20-line script** (`src/scripts/enter.ts`): when 15% of an element is on screen it gets `.is-in` and its animation plays once. The card staircase is plain `position: sticky`: every card sits in its own track, and all tracks end together.
+- **One canvas script** (`src/scripts/scenes.ts`, under 6 KB minified with the other two, no dependencies) draws the particle network, the drifting lines and the dot wave. It caps the device pixel ratio at 2, draws only while a canvas is on screen and the tab is visible, and draws one still frame for reduced motion.
+- **The counters are CSS too:** a registered integer property stepped from 0 and printed with `counter()`. The real numbers are in the HTML for screen readers and search engines.
 
-Browsers without scroll-driven animations and visitors who prefer reduced motion see every section in its final state: text filled, cards flat and lit, the panel at full width, titles straight. Nothing is hidden. The scroll version was checked in Chrome and in Safari's engine (WebKit, via Playwright).
+Phones (under 751px) get no entrances and no scroll effects, like the reference design. Browsers without scroll-driven animations, pages without JavaScript and visitors who prefer reduced motion see every section in its final state: text filled, cards flat and lit, the panel in place, titles straight. Nothing is hidden.
 
 Three CSS details that keep it working:
 
 - Scroll-driven rules use longhand properties (`animation-name`, `animation-timeline`, …). A minifier can merge a shorthand and `animation-timeline` into one declaration that Chrome rejects.
 - Wrappers around animated content use `overflow: clip`, not `overflow: hidden`. `overflow: hidden` creates a scroll container, and a view timeline inside it would track that box instead of the page.
-- Text never fades in through low opacity. Reveals use a mask (`clip-path`) and a slide, and unfilled text is a grey that still has 5.9:1 contrast, so text stays readable while it animates, not only at the end. The one exception is the service cards: while they swing up they are dimmed with a brightness filter, for the few hundred pixels of scrolling the entrance takes.
+- Entrances keep `transform: none` in their first keyframe, so the observer measures the element's real box before it starts. The cards and the media quote fade in over 1.2 s while they flip (as on the reference); every text colour passes AA once settled.
 
 ## Look
 
-Navy-black ground (`--c-bg`), near-white type, a mid grey (`--c-dim`) for text that has not filled yet, and one accent from `theme.accent` with near-black text on it. Display type is Outfit at a light weight. Rounded 20px corners, thin 1px dividers. Colors are tokens at the top of `src/styles/global.css`.
+Navy-black ground (`--c-bg`, #040319), #EEEEEE type (white for the hero heading), a grey (`--c-dim`, #949494, 6.7:1) for text that has not filled yet, and one accent from `theme.accent` (#DCFD35) with navy text on it. Type is Questrial (one weight; bold is synthesized), sized to the reference: 72px heading, 62px statements, 38px paragraphs, 22px leads. Cards and buttons have a 12px radius, pictures 24px.
 
 ## Project structure
 
@@ -127,8 +127,7 @@ src/
 ├── components/
 │   ├── sections/       Hero, Statement, MediaPanel, Services, Split, Process, FinalCta (the home page, in order)
 │   ├── ContactForm.astro   The form and its script
-│   ├── FillText.astro      Letter-by-letter fill (5, 12)
-│   ├── WarpTitle.astro     Warped step titles (11)
+│   ├── FillLines.astro     Line-by-line fill (5, 8, 12)
 │   ├── Orbits.astro        Line-art orbits (6, 11)
 │   ├── Ridgelines.astro    Build-time ridgeline chart (10)
 │   ├── ServiceCard.astro, ServiceArt.astro   Service cards and their line drawings (9)
@@ -136,9 +135,9 @@ src/
 │   └── Header, Footer, Logo, Icon, PageHeader, SectionHeading, Highlight
 ├── content/services/   One Markdown file per service
 ├── layouts/            BaseLayout.astro
-├── lib/                schema.ts (JSON-LD), split.ts (letter splitting), highlight.ts
+├── lib/                schema.ts (JSON-LD), highlight.ts
 ├── pages/              index, services/, about, contact, thanks, 404, robots.txt.ts
-├── scripts/scenes.ts   The canvas scenes
+├── scripts/            scenes.ts (canvas scenes), enter.ts (entrance trigger), follow.ts (orbit lean)
 ├── styles/             global.css (tokens, components), effects.css (all motion)
 ├── config.ts           Everything you rebrand
 └── content.config.ts   Collection schema
@@ -151,4 +150,4 @@ public/                 favicon.svg, og.png, apple-touch-icon.png
 
 ## License
 
-MIT, see `LICENSE`. The illustrations, line drawings and icons were drawn for this theme and are covered by the same license. The font is Outfit, licensed under the SIL Open Font License 1.1 and installed from `@fontsource-variable/outfit`.
+MIT, see `LICENSE`. The illustrations, line drawings and icons were drawn for this theme and are covered by the same license. The font is Questrial, licensed under the SIL Open Font License 1.1 and installed from `@fontsource/questrial`.

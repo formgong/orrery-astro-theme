@@ -1,6 +1,7 @@
 ---
 /**
- * 9. Accent service card. The 3D entrance is ".svc-card" in src/styles/effects.css; the line
+ * 9. Accent service card inside its staircase track (see Services.astro). The track is the
+ * sticky card's containing block; the 3D flip-in is [data-enter="flip"] in effects.css; the line
  * drawing is ServiceArt. The whole card links to the service on the services page.
  */
 import type { CollectionEntry } from "astro:content";
@@ -8,33 +9,49 @@ import ServiceArt from "./ServiceArt.astro";
 
 interface Props {
   service: CollectionEntry<"services">;
+  /** Track geometry as CSS variables, set by Services.astro. */
+  style?: string;
 }
-const { service } = Astro.props;
+const { service, style } = Astro.props;
 const { title, tags, art } = service.data;
 ---
 
-<li class="svc-card">
-  <div class="svc-face">
-    <h3 class="text-2xl font-normal tracking-tight">
+<li class="svc-track" style={style}>
+  <div class="svc-card" data-enter="flip">
+    <h3 class="svc-title">
       <a href={`/services/#${service.id}`} class="svc-link">{title}</a>
     </h3>
-    <p class="mt-3 text-[1.0625rem] leading-relaxed">{tags}</p>
-    <ServiceArt kind={art} class="mt-auto pt-8" />
+    <p class="svc-tags">{tags}</p>
+    <ServiceArt kind={art} class="svc-art" />
   </div>
 </li>
 
 <style>
-  .svc-face {
+  .svc-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    min-height: 19rem;
-    padding: 1.75rem 1.75rem 2rem;
+    height: 250px;
+    padding: 24px;
     border-radius: var(--radius);
     background: var(--accent);
     color: var(--accent-text);
-    transition: transform 0.35s var(--ease-out);
+  }
+  .svc-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .svc-tags {
+    margin-top: 12px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .svc-card :global(.svc-art) {
+    margin-top: auto;
+    width: 252px;
+    max-width: 100%;
+    max-height: 100px;
   }
   .svc-link::after {
     content: "";
@@ -49,12 +66,31 @@ const { title, tags, art } = service.data;
     outline: 2px solid var(--c-ink);
     outline-offset: 4px;
   }
-  .svc-face:hover {
-    transform: translateY(-4px);
+
+  /* Staircase tracks: 2 columns on tablets, 3 from 900px. */
+  @media (min-width: 751px) {
+    .svc-track {
+      position: absolute;
+      left: calc(var(--c2) * (100% + 24px) / 2);
+      top: var(--t2);
+      bottom: var(--b2);
+      width: calc((100% - 24px) / 2);
+    }
+    .svc-card {
+      position: sticky;
+      top: var(--st2);
+      height: 270px;
+    }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .svc-face:hover {
-      transform: none;
+  @media (min-width: 900px) {
+    .svc-track {
+      left: calc(var(--c3) * (100% + 24px) / 3);
+      top: var(--t3);
+      bottom: var(--b3);
+      width: calc((100% - 48px) / 3);
+    }
+    .svc-card {
+      top: var(--st3);
     }
   }
 </style>

@@ -1,6 +1,6 @@
 ---
 title: Pricing
-tags: price tests, discount rules, margin by product
+tags: price tests, discount rules, gross margin
 summary: We estimate how demand responds to price for each product group, then set prices and discount limits from that.
 art: curve
 order: 4

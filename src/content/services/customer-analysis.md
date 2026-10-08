@@ -1,6 +1,6 @@
 ---
 title: Customer analysis
-tags: segments, churn, lifetime value
+tags: segments, churn, lifetime value, who to call first
 summary: Segments built from what customers buy and how often, plus a churn score your account managers can use every week.
 art: clusters
 order: 6

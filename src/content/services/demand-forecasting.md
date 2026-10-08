@@ -1,6 +1,6 @@
 ---
 title: Demand forecasting
-tags: weekly forecasts, stock levels, staffing
+tags: weekly forecasts, stock levels, staffing plans
 summary: Forecasts by product and location with a range around every number, so buyers can see how sure the model is.
 art: forecast
 order: 3

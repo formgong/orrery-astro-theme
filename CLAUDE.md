@@ -22,11 +22,14 @@ Orrery is a static Astro 7 theme (Tailwind CSS 4, TypeScript). Read `README.md` 
 
 ## Motion rules that are easy to break
 
-- The default style of every animated element is its final state. Motion goes inside `@supports (animation-timeline: …)` and `@media (prefers-reduced-motion: no-preference)`.
+- The default style of every animated element is its final state. Motion goes inside `@supports (animation-timeline: …)` (scroll-linked) and `@media (prefers-reduced-motion: no-preference) and (min-width: 751px)`: phones are still, like the reference design.
+- Timings, easings, ranges and start poses were measured on the reference with a Playwright twin oracle. Change a value only after measuring again.
 - Scroll-driven animations: use longhands (`animation-name`, `animation-timeline`, `animation-range`, …). The minifier can merge a shorthand plus `animation-timeline` into a declaration Chrome rejects.
 - Use `overflow: clip` (not `hidden`) on wrappers around animated content; `hidden` creates a scroll container that view timelines then track.
-- Don't fade text in through opacity: reveal with `clip-path` and a transform, so contrast stays AA while it moves.
-- Split letters at build time (`src/lib/split.ts`), never in the browser. Keep the plain sentence in a `sr-only` span and the letter spans `aria-hidden`.
+- Write `view(0px)`, not `view()`: the default inset is the page's `scroll-padding` (the header height), which shortens every range.
+- Entrances (`[data-enter]`) are paused until `src/scripts/enter.ts` adds `.is-in` (15% visible). Keep `transform: none` in their first keyframe so the observer sees the real box. Without JavaScript they never start, so the element simply shows.
+- Text reveals use `clip-path` and transforms. The one exception, on the owner's request: the cards and the media quote fade in over 1.2 s while they flip, as on the reference. Every text colour passes AA once settled.
+- The fill lines (`FillLines.astro`) draw each line twice, grey and accent; keep the plain sentence in a `sr-only` span and the drawn lines `aria-hidden`.
 - No animation libraries (GSAP, Lenis, Three.js and the like).
 - Astro component `<style>` blocks are unlayered and beat Tailwind utilities. Don't set `display` in a component style on an element that also uses responsive display utilities.
 - Playwright WebKit screenshots flatten 3D transforms; check the 3D card entrance in WebKit with a recorded video instead.

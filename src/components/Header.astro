@@ -12,13 +12,13 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
 ---
 
 <header class="site-header">
-  <div class="container-x relative grid h-(--header-h) grid-cols-[1fr_auto] items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-    <a href="/" class="justify-self-start rounded-lg">
+  <div class="header-inner">
+    <a href="/" class="header-logo">
       <Logo />
     </a>
 
-    <nav aria-label="Main" class="hidden lg:block">
-      <ul class="flex items-center gap-2">
+    <nav aria-label="Main" class="main-nav">
+      <ul>
         {
           SITE.nav.map((item) => (
             <li>
@@ -31,19 +31,17 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
       </ul>
     </nav>
 
-    <div class="flex items-center gap-2 justify-self-end">
-      <a href={SITE.cta.href} class="btn btn-primary hidden min-h-12 px-6 sm:inline-flex lg:min-h-14 lg:px-7 lg:text-lg">{SITE.cta.label}</a>
-      <button type="button" popovertarget="mobile-nav" class="menu-btn inline-grid lg:hidden" aria-label="Open menu">
-        <Icon name="menu" />
-      </button>
-    </div>
+    <a href={SITE.cta.href} class="btn btn-primary header-cta">{SITE.cta.label}</a>
+    <button type="button" popovertarget="mobile-nav" class="menu-btn" aria-label="Open menu">
+      <Icon name="menu" />
+    </button>
     <span class="header-rule" aria-hidden="true"></span>
   </div>
 
   <div id="mobile-nav" popover class="mobile-nav">
-    <div class="container-x flex h-(--header-h) items-center justify-between">
-      <a href="/" class="rounded-lg"><Logo /></a>
-      <button type="button" popovertarget="mobile-nav" popovertargetaction="hide" class="menu-btn inline-grid" aria-label="Close menu">
+    <div class="header-inner">
+      <a href="/" class="header-logo"><Logo /></a>
+      <button type="button" popovertarget="mobile-nav" popovertargetaction="hide" class="menu-btn" aria-label="Close menu">
         <Icon name="x" />
       </button>
     </div>
@@ -77,58 +75,94 @@ const isCurrent = (href: string) => path === href || path.startsWith(href);
 </script>
 
 <style>
+  /* Measured on the reference: 90px tall; logo, links and button on a 1296px row (1200px column
+     plus 48px each side); a 1px line from the row's left edge to the right edge of the screen. */
   .site-header {
     position: fixed;
     inset: 0 0 auto;
     z-index: 50;
+    height: var(--header-h);
     overflow-x: clip;
     background: var(--c-bg);
     view-transition-name: site-header;
   }
-  /* From the left edge of the content to the right edge of the screen (clipped there). */
+  .header-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    height: var(--header-h);
+    margin-inline: auto;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    width: 200px;
+    height: 52px;
+  }
   .header-rule {
     position: absolute;
     bottom: 0;
-    left: 1rem;
-    right: -100vw;
+    left: 0;
+    right: calc((100% - 100vw) / 2);
     height: 1px;
-    background: rgb(255 255 255 / 0.28);
+    background: var(--c-line);
   }
-  @media (min-width: 640px) {
-    .header-rule {
-      left: 1.5rem;
-    }
+  .main-nav,
+  .header-cta {
+    display: none;
   }
-  @media (min-width: 1024px) {
-    .header-rule {
-      left: 2rem;
-    }
+  .main-nav ul {
+    display: flex;
+    gap: 48px;
   }
   .nav-link {
-    display: inline-flex;
-    padding: 0.625rem 1.25rem;
-    border-radius: 0.625rem;
-    font-size: 1.0625rem;
-    text-transform: lowercase;
-    color: var(--c-ink);
+    display: block;
+    padding-block: 7px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--c-white);
     transition: color 0.2s;
   }
   .nav-link:hover,
   .nav-link[aria-current="page"] {
     color: var(--accent);
   }
-  /* display comes from utility classes so lg:hidden can win */
+  .header-cta {
+    width: 150px;
+    height: 60px;
+  }
+  /* Phones: a lime round menu button, as on the reference. */
   .menu-btn {
+    display: grid;
     place-items: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 0.875rem;
-    border: 1px solid rgb(255 255 255 / 0.3);
-    color: var(--c-ink);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-text);
   }
   .menu-btn :global(.icon) {
-    width: 1.375rem;
-    height: 1.375rem;
+    width: 22px;
+    height: 22px;
+  }
+  @media (min-width: 1001px) {
+    .header-inner {
+      width: min(1296px, 100% - 32px);
+    }
+    /* The links start 114px left of the centre (as measured), so they line up whatever their length. */
+    .main-nav {
+      display: block;
+      position: absolute;
+      left: calc(50% - 114px);
+    }
+    .header-cta {
+      display: inline-flex;
+    }
+    .site-header > .header-inner > .menu-btn {
+      display: none;
+    }
   }
   .mobile-nav {
     position: fixed;

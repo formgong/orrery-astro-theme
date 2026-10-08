@@ -11,8 +11,10 @@
 interface Props {
   variant?: "nested" | "rings";
   class?: string;
+  /** Lean towards the pointer, with this transition time in ms (src/scripts/follow.ts). */
+  follow?: number;
 }
-const { variant = "nested", class: className } = Astro.props;
+const { variant = "nested", class: className, follow } = Astro.props;
 
 type Ring = { cx: number; cy: number; r: number; dashed?: boolean; dot?: number; dur: number; reverse?: boolean };
 const rings: Ring[] =
@@ -34,7 +36,7 @@ const rings: Ring[] =
 const rad = (deg: number) => (deg * Math.PI) / 180;
 ---
 
-<svg viewBox="0 0 400 400" fill="none" aria-hidden="true" class:list={["orbits", className]}>
+<svg viewBox="0 0 400 400" fill="none" aria-hidden="true" class:list={["orbits", className]} data-follow={follow}>
   <g class="orbits-turn" style="transform-origin: 200px 200px; transform-box: view-box">
     {
       rings.map((ring) => (

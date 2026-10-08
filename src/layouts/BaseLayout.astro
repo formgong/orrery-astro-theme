@@ -1,5 +1,5 @@
 ---
-import "@fontsource-variable/outfit";
+import "@fontsource/questrial/400.css";
 import "../styles/global.css";
 import { SITE } from "../config";
 import Head, { type Props as HeadProps } from "../components/Head.astro";
@@ -8,10 +8,12 @@ import Footer from "../components/Footer.astro";
 
 type Props = HeadProps;
 const props = Astro.props;
+const hex = SITE.theme.accent.replace("#", "");
+const accentHalf = `rgba(${[0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(", ")}, 0.5)`;
 ---
 
 <!doctype html>
-<html lang={SITE.lang} style={`--accent:${SITE.theme.accent};--accent-text:${SITE.theme.accentText}`}>
+<html lang={SITE.lang} style={`--accent:${SITE.theme.accent};--accent-half:${accentHalf};--accent-text:${SITE.theme.accentText}`}>
   <head>
     <Head {...props} />
   </head>
@@ -24,6 +26,8 @@ const props = Astro.props;
     <Footer />
     <script>
       import "../scripts/scenes";
+      import "../scripts/enter";
+      import "../scripts/follow";
     </script>
   </body>
 </html>

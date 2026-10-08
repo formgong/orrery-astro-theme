@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "@fontsource-variable/outfit": "^5.2.8",
+    "@fontsource/questrial": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.3.7",
     "tailwindcss": "^4.3.3"
