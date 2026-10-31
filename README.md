@@ -70,7 +70,9 @@ The contact form posts to [Formgong](https://formgong.com), a hosted form backen
    or set `formgong.accessKey` in `src/config.ts`. While the placeholder key is in use, the dev server shows a reminder above the form.
 4. Set `url` in `src/config.ts` to your real domain. Visitors without JavaScript are redirected to `/thanks/` on that domain. Formgong only follows a redirect on the site that sent the form, so on `localhost` you land on Formgong's own thank-you page instead.
 
-Submissions arrive by email and, if you connect it, in Telegram. The free plan covers 300 submissions a month.
+Submissions arrive by email and, if you connect it, in Telegram. The free plan covers 1,000 submissions a month.
+
+**The Formgong credit links your review page.** With a real access key, the build asks Formgong once (`POST https://formgong.com/api/review-page` with the key and your site's `url`). Formgong makes a public review page for your site the first time, where your clients can read and leave reviews, and the "Formgong" link next to the form points there. You can switch the page off in the Formgong dashboard (Reviews → your site → Settings), or change the link in `src/components/Footer.astro`. With the placeholder key or another form backend nothing is sent and the link goes to formgong.com.
 
 **How the form behaves**
 

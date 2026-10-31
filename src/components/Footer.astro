@@ -1,9 +1,11 @@
 ---
 /** 13. Footer over an animated 3D field of dots (canvas, src/scripts/scenes.ts). */
 import { SITE } from "../config";
+import { reviewPageUrl } from "../lib/review-page";
 
 const { address } = SITE;
 const year = new Date().getFullYear();
+const reviewPage = await reviewPageUrl(import.meta.env.PUBLIC_FORMGONG_ACCESS_KEY || SITE.formgong.accessKey, import.meta.env.PUBLIC_FORMGONG_ENDPOINT || SITE.formgong.endpoint, Astro.site);
 ---
 
 <footer class="site-footer">
@@ -44,7 +46,7 @@ const year = new Date().getFullYear();
 
     <div class="f-legal">
       <p>&copy; {year} {SITE.name}. A made-up business.</p>
-      <p class="f-small">Orrery theme for Astro. Forms by <a href="https://formgong.com" class="underline underline-offset-4">Formgong</a>.</p>
+      <p class="f-small">Orrery theme for Astro. Forms by <a href={reviewPage} class="underline underline-offset-4">Formgong</a>.</p>
     </div>
     <ul class="f-social">
       {
